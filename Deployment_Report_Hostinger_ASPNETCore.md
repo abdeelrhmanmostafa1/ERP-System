@@ -119,57 +119,6 @@ flowchart TD
 
 ---
 
-## Linux VPS Setup
-
-1. Provision Ubuntu LTS VPS on Hostinger.
-2. Create non-root sudo user and disable password SSH login.
-3. Configure firewall (UFW): allow `22`, `80`, `443`.
-4. Install .NET runtime, Nginx, certbot.
-5. Deploy app to `/var/www/erp-api`.
-6. Register `systemd` service for API.
-7. Configure Nginx reverse proxy and TLS.
-8. Validate health endpoint and logs.
-
-```bash
-sudo apt update && sudo apt upgrade -y
-sudo apt install -y nginx ufw
-sudo ufw allow OpenSSH
-sudo ufw allow 'Nginx Full'
-sudo ufw enable
-```
-
-### Sample systemd Unit
-
-```ini
-# /etc/systemd/system/erp-api.service
-[Unit]
-Description=ERP ASP.NET Core API
-After=network.target
-
-[Service]
-WorkingDirectory=/var/www/erp-api
-ExecStart=/usr/bin/dotnet /var/www/erp-api/ERP.Api.dll
-Restart=always
-RestartSec=10
-KillSignal=SIGINT
-SyslogIdentifier=erp-api
-User=www-data
-Environment=ASPNETCORE_ENVIRONMENT=Production
-Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
-
-[Install]
-WantedBy=multi-user.target
-```
-
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable erp-api
-sudo systemctl start erp-api
-sudo systemctl status erp-api
-```
-
----
-
 ## Windows VPS Setup
 
 1. Provision Windows Server VPS.
